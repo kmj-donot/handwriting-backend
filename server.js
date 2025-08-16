@@ -6,13 +6,28 @@ const pdfParse = require('pdf-parse');
 const mammoth = require('mammoth');
 
 const app = express();
-const port = 5000; // Choose a port that is not in use by your React app
+const port = 5000;
 
-app.use(cors()); // Allow cross-origin requests from your React app
+// Get your live Netlify URL and add it to the allowed origins.
+// Replace this placeholder with your actual Netlify URL.
+const allowedOrigins = ['handrwitting.netlify.app'];
+
+const corsOptions = {
+    origin: (origin, callback) => {
+        // Check if the origin is in our allowed list, or if it's not present (like for same-origin requests)
+        if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'));
+        }
+    }
+};
+
+app.use(cors(corsOptions)); // Use the custom CORS middleware
 app.use(express.json());
 
 // Set up Multer for file uploads
-const storage = multer.memoryStorage(); // Store the file in memory
+const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
 app.get('/', (req, res) => {
