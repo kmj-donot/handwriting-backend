@@ -8,22 +8,20 @@ const mammoth = require('mammoth');
 const app = express();
 const port = 5000;
 
-// Get your live Netlify URL and add it to the allowed origins.
-// Replace this placeholder with your actual Netlify URL.
-const allowedOrigins = ['handrwitting.netlify.app'];
+// Your live Netlify URL.
+// This is the only origin allowed to make requests to your backend.
+// Note the added 'https://'
+const frontendUrl = 'https://handrwitting.netlify.app';
 
+// CORS configuration to explicitly allow your frontend URL.
+// The `optionsSuccessStatus: 200` ensures a successful pre-flight response.
 const corsOptions = {
-    origin: (origin, callback) => {
-        // Check if the origin is in our allowed list, or if it's not present (like for same-origin requests)
-        if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
-            callback(null, true);
-        } else {
-            callback(new Error('Not allowed by CORS'));
-        }
-    }
+    origin: frontendUrl,
+    optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
 };
 
-app.use(cors(corsOptions)); // Use the custom CORS middleware
+// Use the CORS middleware with the specific options.
+app.use(cors(corsOptions));
 app.use(express.json());
 
 // Set up Multer for file uploads
